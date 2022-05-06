@@ -1,6 +1,6 @@
 ﻿using MyGarage.Controllers;
 
-namespace MyGarage.Services;
+namespace MyGarage.Interfaces;
 
 public interface IUsersService
 {

@@ -6,14 +6,19 @@ using MyGarage.Interfaces;
 using MyGarage.Models;
 using MyGarage.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MyGarage.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<Settings>(builder.Configuration.GetSection("MongoDB"));
 
 builder.Services.AddSingleton<IDbContext, DbContext>();
+builder.Services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddSingleton<IIdGenerator, CustomIdGenerator>();
+
 builder.Services.AddSingleton<ICarsRepository, CarsRepository>();
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<IUsersService, UsersService>();
