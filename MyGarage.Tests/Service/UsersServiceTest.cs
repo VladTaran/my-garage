@@ -2,12 +2,12 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using Moq;
 using MyGarage.Controllers;
 using MyGarage.Interfaces;
-using MyGarage.Models;
 using MyGarage.Services;
 using NUnit.Framework;
-using Moq;
+using MyGarage.Data.Model;
 using Rhino.Mocks;
 
 namespace MyGarage.Tests.Service;
@@ -41,14 +41,14 @@ public class UsersServiceTest
         var userRequest = new UserCreateRequest
         {
             Email = "mygarage@g.c",
-            Username = "My Garage Username",
+            Nickname = "My Garage Username",
             Password = "mygaragepassword1!"
         };
 
-        var expectedId = ToGuid(1);
+        var expectedId = 1.ToGuid();
         _idGeneratorMock.Setup(x => x.NewGuid()).Returns(expectedId);
         _userRepositoryMock
-            .Setup(x => x.Create(Arg<User>.Is.Anything))
+            .Setup(x => x.Create(It.IsAny<User>()))
             .Returns(Task.FromResult(expectedId));
 
         _passwordHasherMock.Setup(x => x.HashPassword(Arg<User>.Is.Anything, Arg<string>.Is.Anything)).Returns(string.Empty);
@@ -63,10 +63,31 @@ public class UsersServiceTest
         
     }
     
-    public static Guid ToGuid(int value)
+    [Test]
+    public async Task TryToRegisterUser_Fail_UserExists()
     {
-        byte[] bytes = new byte[16];
-        BitConverter.GetBytes(value).CopyTo(bytes, 0);
-        return new Guid(bytes);
+        //Given 
+        var userRequest = new UserCreateRequest
+        {
+            Email = "mygarage@g.c",
+            Nickname = "My Garage Username",
+            Password = "mygaragepassword1!"
+        };
+
+        var expectedId = 1.ToGuid();
+        _idGeneratorMock.Setup(x => x.NewGuid()).Returns(expectedId);
+        
+        // When
+        
+        _userRepositoryMock
+            .Setup(x => x.GetByEmail(It.IsAny<string>()))
+            .Returns(Task.FromResult(new User()));
+        
+        //Then
+        
+        var ex = Assert.ThrowsAsync<ApplicationException>(() => _usersService.Register(userRequest));
+        Assert.IsNotNull(ex);
+        Assert.That(ex.Message, Is.EqualTo("User already exists"));
+        
     }
 }
