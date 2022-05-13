@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using MyGarage.Interfaces;
-using MyGarage.Models;
-using MyGarage.Services;
+﻿using MyGarage.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using MyGarage.Controllers.Request;
 
 namespace MyGarage.Controllers;
 
@@ -20,13 +18,9 @@ public class AuthController : AuthorizedApiController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetItems()
+    public async Task<IActionResult> Health()
     {
-        return Ok(new List<string>
-        {
-            "Value1",
-            "Value2"
-        });
+        return Ok();
     }
 
     [HttpPost("token")]
@@ -41,14 +35,22 @@ public class AuthController : AuthorizedApiController
             Token = token,
             ExpiresIn = 3600,
             UserId =  user.Id,
-            UserName = user.Username
+            UserName = user.Nickname
         });
     }
     
     [HttpPost("signup")]
     public async Task<IActionResult> Signup([FromBody] UserCreateRequest request)
     {
-        await _usersService.Register(request);
+        try
+        {
+            await _usersService.Register(request);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+
         return Created(
             "User has been created successfully", 
             StatusCodes.Status201Created);
@@ -58,6 +60,6 @@ public class AuthController : AuthorizedApiController
 public class UserCreateRequest
 {
     public string Email { get; set; }
-    public string Username { get; set; }
+    public string Nickname { get; set; }
     public string Password { get; set; }
 }

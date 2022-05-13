@@ -1,6 +1,6 @@
 ﻿using MyGarage.Interfaces;
 
-namespace MyGarage.Models;
+namespace MyGarage.Controllers.Request;
 
 public class LoginModel : IUserCredentials
 {

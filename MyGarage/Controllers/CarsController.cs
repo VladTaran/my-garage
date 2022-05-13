@@ -4,6 +4,7 @@ using MyGarage.Interfaces;
 using MyGarage.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MyGarage.Data.Model;
 
 namespace MyGarage.Controllers;
 

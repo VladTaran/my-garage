@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 
-namespace MyGarage.Models;
+namespace MyGarage.Data.Model;
 
 [BsonIgnoreExtraElements]
 public class Car

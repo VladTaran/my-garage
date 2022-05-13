@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using MyGarage;
 using MyGarage.Data;
-using MyGarage.Data.Context;
 using MyGarage.Interfaces;
 using MyGarage.Models;
 using MyGarage.Services;
@@ -10,12 +9,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MyGarage.Common;
+using MyGarage.Data.DbContext;
+using MyGarage.Data.Model;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<Settings>(builder.Configuration.GetSection("MongoDB"));
 
-builder.Services.AddSingleton<IDbContext, DbContext>();
+builder.Services.AddSingleton<IMongoDbContext, MongoDbContext>();
 builder.Services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddSingleton<IIdGenerator, CustomIdGenerator>();
 
@@ -31,6 +32,8 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "My Garage API", Version = "v1" });
 });
+
+builder.Services.AddAutoMapper(typeof(AppMappingProfile));
 
 var appSettingsSection = builder.Configuration.GetSection("AppSettings");
 builder.Services.Configure<AppSettings>(appSettingsSection);

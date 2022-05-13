@@ -6,5 +6,5 @@ public interface IUsersService
 {
     public Task<string?> GetToken(string email, string password);
     public Task<Guid> Register(UserCreateRequest user);
-    public bool IsUniqueUser(string username);
+    public Task<bool> CheckUserExists(string property, string value);
 }

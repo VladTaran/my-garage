@@ -1,4 +1,5 @@
-﻿using MyGarage.Models;
+﻿using MyGarage.Data.Model;
+using MyGarage.Models;
 
 namespace MyGarage.Interfaces;
 

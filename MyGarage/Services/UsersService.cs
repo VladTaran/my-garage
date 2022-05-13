@@ -4,9 +4,9 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using MyGarage.Controllers;
 using MyGarage.Interfaces;
-using MyGarage.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using MyGarage.Data.Model;
 
 namespace MyGarage.Services;
 
@@ -59,11 +59,23 @@ public class UsersService : IUsersService
 
     public async Task<Guid> Register(UserCreateRequest userRequest)
     {
+        var userExistsEmailCheck = await CheckUserExists("email", userRequest.Email);
+        if (userExistsEmailCheck)
+        {
+            throw new ApplicationException("User already exists");
+        }
+        
+        var userExistsNicknameCheck = await CheckUserExists("nickname", userRequest.Nickname);
+        if (userExistsNicknameCheck)
+        {
+            throw new ApplicationException("User already exists");
+        }
+
         var user = new User
         {
             Id = _idGenerator.NewGuid(),
             Email = userRequest.Email,
-            Username = userRequest.Username,
+            Nickname = userRequest.Nickname,
         };
         
         var hashedPassword = _passwordHashService.HashPassword(user, userRequest.Password);
@@ -73,8 +85,22 @@ public class UsersService : IUsersService
         return user.Id;
     }
 
-    public bool IsUniqueUser(string username)
+    public async Task<bool> CheckUserExists(string property, string value)
     {
-        return true;
+        switch (property)
+        {
+            case "email":
+            {
+                var user = await _userRepository.GetByEmail(value);
+                return user != null;
+            }
+            case "nickname":
+            {
+                var user = await _userRepository.GetByNickname(value);
+                return user != null;
+            }
+            default:
+                return false;
+        }
     }
 }

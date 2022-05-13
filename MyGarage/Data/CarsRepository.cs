@@ -1,16 +1,17 @@
-﻿using MyGarage.Data.Context;
-using MyGarage.Interfaces;
+﻿using MyGarage.Interfaces;
 using MyGarage.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MyGarage.Data.DbContext;
+using MyGarage.Data.Model;
 
 namespace MyGarage.Data;
 
 public class CarsRepository : ICarsRepository
 {
-    private readonly IDbContext _dbContext;
+    private readonly IMongoDbContext _dbContext;
     
-    public CarsRepository(IDbContext dbContext)
+    public CarsRepository(IMongoDbContext dbContext)
     {
         _dbContext = dbContext;
     }

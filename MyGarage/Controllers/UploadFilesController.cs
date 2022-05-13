@@ -2,7 +2,6 @@
 using Amazon.S3;
 using Amazon.S3.Transfer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -55,13 +54,5 @@ public class UploadFilesController : AuthorizedApiController
         {
             fileId = fileName
         });
-    }
-
-    private static string GenerateS3FileName(string initialName)
-    {
-        var ext = Path.GetExtension(initialName);
-        var name = initialName.Split(ext)[0];
-
-        return $"{name}{Guid.NewGuid()}{ext}";
     }
 }
